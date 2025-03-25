@@ -1,25 +1,28 @@
 import azure.functions as func
 import logging
+import json
 
-app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
+def main(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('Procesando la petición HTTP.')
 
-@app.route(route="createListing")
-def createListing(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python HTTP trigger function processed a request.')
+    # Intenta obtener el parámetro 'id' de la query string
+    id_param = req.params.get('id')
 
-    name = req.params.get('name')
-    if not name:
-        try:
-            req_body = req.get_json()
-        except ValueError:
-            pass
-        else:
-            name = req_body.get('name')
+    # Intenta obtener el body y loguearlo
+    req_body = {}
+    try:
+        req_body = req.get_json()
+        logging.info("Cuerpo recibido: " + json.dumps(req_body))
+    except Exception as e:
+        logging.error("Error al obtener el body: " + str(e))
 
-    if name:
-        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
+    # Si 'id' no viene en la query, se extrae del body
+    if not id_param:
+        id_param = req_body.get('id')
+
+    if id_param:
+        response = {"message": f"ID recibido: {id_param}"}
+        return func.HttpResponse(json.dumps(response), status_code=200, mimetype="application/json")
     else:
-        return func.HttpResponse(
-             "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-             status_code=200
-        )
+        response = {"error": "Por favor, proporciona un 'id' en la query string o en el body."}
+        return func.HttpResponse(json.dumps(response), status_code=400, mimetype="application/json")
