@@ -2,44 +2,41 @@ name: Deploy Python project to Azure Function App
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'createListing'   # Nombre de tu Function App
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'         # Ruta del proyecto (por defecto, la raíz del repo)
-  PYTHON_VERSION: '3.9'                       # Versión de Python a usar
+  AZURE_FUNCTIONAPP_NAME: 'createListing'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
+  PYTHON_VERSION: '3.9'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: dev
     steps:
-      - name: 'Checkout repository'
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: 'Setup Python ${{ env.PYTHON_VERSION }} Environment'
+      - name: Setup Python Environment
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: 'Install dependencies'
-        shell: bash
+      - name: Install dependencies
         run: |
-          pushd "./${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
+          pushd "${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
           python -m pip install --upgrade pip
           pip install -r requirements.txt --target=".python_packages/lib/site-packages"
           popd
 
-      - name: 'Zip project files'
-        shell: bash
+      - name: Create ZIP package
         run: |
-          # Asegúrate de incluir host.json y las carpetas de función
-          zip -r functionapp.zip . -x "*.git*"
+          # Empaqueta el contenido de la raíz. Asegúrate de que host.json y las carpetas de las funciones
+          # estén en la raíz del ZIP (no dentro de una carpeta adicional).
+          zip -r functionapp.zip * -x "*.git*"
 
-      - name: 'Deploy to Azure Functions via Zip Deploy'
+      - name: Deploy to Azure Functions using Zip Deploy
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-          slot-name: 'Production'
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
           package: functionapp.zip
