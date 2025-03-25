@@ -8,7 +8,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     # Intenta obtener el parámetro 'id' de la query string
     id_param = req.params.get('id')
 
-    # Intenta obtener el body y loguearlo
+    
     req_body = {}
     try:
         req_body = req.get_json()
