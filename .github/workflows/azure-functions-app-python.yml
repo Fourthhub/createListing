@@ -2,10 +2,10 @@ name: Deploy Python project to Azure Function App
 
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'createListing'   # Cambia este valor por el nombre de tu Function App
+  AZURE_FUNCTIONAPP_NAME: 'createListing'   # Nombre de tu Function App
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'         # Ruta del proyecto (por defecto, la raíz del repo)
   PYTHON_VERSION: '3.9'                       # Versión de Python a usar
 
@@ -14,15 +14,15 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     steps:
-      - name: 'Checkout GitHub Action'
+      - name: 'Checkout repository'
         uses: actions/checkout@v3
 
-      - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
+      - name: 'Setup Python ${{ env.PYTHON_VERSION }} Environment'
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: 'Resolve Project Dependencies Using Pip'
+      - name: 'Install dependencies'
         shell: bash
         run: |
           pushd "./${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
@@ -30,12 +30,16 @@ jobs:
           pip install -r requirements.txt --target=".python_packages/lib/site-packages"
           popd
 
-      - name: 'Run Azure Functions Action'
-        uses: Azure/functions-action@v1
-        id: fa
+      - name: 'Zip project files'
+        shell: bash
+        run: |
+          # Asegúrate de incluir host.json y las carpetas de función
+          zip -r functionapp.zip . -x "*.git*"
+
+      - name: 'Deploy to Azure Functions via Zip Deploy'
+        uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          slot-name: 'Production'
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-          scm-do-build-during-deployment: false
-          enable-oryx-build: false
+          package: functionapp.zip
