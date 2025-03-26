@@ -2,13 +2,12 @@ name: Deploy Python project to Azure Function App
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'createListing'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
   PYTHON_VERSION: '3.9'
-  AZURE_RESOURCE_GROUP: 'createlisting'  # Reemplaza con el nombre real de tu grupo de recursos
 
 jobs:
   build-and-deploy:
@@ -32,14 +31,14 @@ jobs:
       - name: Create ZIP package
         run: |
           rm -f functionapp.zip
-          # Asegúrate de que en la raíz del ZIP estén host.json y las carpetas de funciones
+          # Asegúrate de que en la raíz del ZIP estén host.json y las carpetas de tus funciones
           zip -r functionapp.zip * -x "*.git*"
 
-      - name: Azure Login
-        uses: azure/login@v1
+      - name: Deploy to Azure Function App using Publish Profile
+        uses: Azure/functions-action@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Deploy ZIP package via Azure CLI
-        run: |
-          az functionapp deployment source config-zip --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_FUNCTIONAPP_NAME }} --src functionapp.zip
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: functionapp.zip
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+          scm-do-build-during-deployment: 'false'
+          enable-oryx-build: 'false'
