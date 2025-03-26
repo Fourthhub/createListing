@@ -9,6 +9,7 @@ env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
   PYTHON_VERSION: '3.9'
 
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
