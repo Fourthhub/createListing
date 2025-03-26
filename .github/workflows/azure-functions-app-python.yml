@@ -8,6 +8,7 @@ env:
   AZURE_FUNCTIONAPP_NAME: 'createListing'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
   PYTHON_VERSION: '3.9'
+  AZURE_RESOURCE_GROUP: 'createlisting'  # Reemplaza con el nombre de tu grupo de recursos
 
 jobs:
   build-and-deploy:
@@ -30,11 +31,17 @@ jobs:
 
       - name: Create ZIP package
         run: |
-          # Empaqueta el contenido de la raíz. Asegúrate de que host.json y las carpetas de las funciones
-          # estén en la raíz del ZIP (no dentro de una carpeta adicional).
+          rm -f functionapp.zip
+          # Se asume que host.json y las carpetas de funciones (con sus function.json) están en la raíz
           zip -r functionapp.zip * -x "*.git*"
 
-      - name: Deploy to Azure Functions using Zip Deploy
+      - name: Set WEBSITE_RUN_FROM_PACKAGE App Setting
+        uses: azure/cli@v1
+        with:
+          inlineScript: |
+            az functionapp config appsettings set --name ${{ env.AZURE_FUNCTIONAPP_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --settings WEBSITE_RUN_FROM_PACKAGE=1
+
+      - name: Deploy to Azure Function App via Zip Deploy
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
