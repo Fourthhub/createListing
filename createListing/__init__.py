@@ -148,7 +148,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     except Exception as e:
         return func.HttpResponse("Body inválido", status_code=400)
 
-    # Webhook verification
     if "challenge" in req_body:
         return func.HttpResponse(json.dumps(req_body), mimetype="application/json")
 
@@ -162,28 +161,27 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         "Content-Type": "application/json"
     }
 
-    # QUERY con title incluido desde column
     query = {
-    "query": """
-        query ($itemId: [ID!]) {
-            items(ids: $itemId) {
-                name
-                column_values {
-                    id
-                    text
-                    column {
+        "query": """
+            query ($itemId: [ID!]) {
+                items(ids: $itemId) {
+                    name
+                    column_values {
                         id
-                        title
+                        text
+                        column {
+                            id
+                            title
+                        }
+                        value
                     }
-                    value
                 }
             }
+        """,
+        "variables": {
+            "itemId": pulse_id
         }
-    """,
-    "variables": {
-        "itemId": pulse_id
     }
-}
 
     try:
         response = requests.post(MONDAY_API_URL, json=query, headers=headers)
@@ -192,17 +190,23 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
         column_values = data["data"]["items"][0]["column_values"]
 
+        nombre = None
+        direccion = None
+
         for col in column_values:
             title = col.get("column", {}).get("title", "").strip().lower()
-            if title == "Nombre Del Apartamento":
+            if title == "nombre del apartamento":
                 nombre = col.get("text", "").strip()
-            elif title == "Direccion exactaf":
+            elif title == "direccion exacta":
                 direccion = col.get("text", "").strip()
-        crear_listing(nombre,direccion)
+
+        if not nombre or not direccion:
+            return func.HttpResponse("Faltan nombre o dirección", status_code=400)
+
+        resultado = crear_listing(nombre, direccion)
 
         return func.HttpResponse(json.dumps(resultado), mimetype="application/json", status_code=200)
 
     except Exception as e:
-        logging.error(f"Error al consultar Monday: {e}")
-        logging.error("Respuesta: " + response.text)
-        return func.HttpResponse("Error consultando Monday", status_code=500)
+        logging.error(f"Error procesando la función: {e}")
+        return func.HttpResponse("Error interno", status_code=500)
