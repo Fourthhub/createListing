@@ -194,9 +194,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
         for col in column_values:
             title = col.get("column", {}).get("title", "").strip().lower()
-            if title == "nombre del apartamento":
+            if title == "Nombre Del Apartamento":
                 nombre = col.get("text", "").strip()
-            elif title == "direccion exacta":
+            elif title == "Direccion exactaf":
                 direccion = col.get("text", "").strip()
         crear_listing(nombre,direccion)
 
