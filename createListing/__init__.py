@@ -31,4 +31,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         logging.error("Error al obtener el body: " + str(e))
         return func.HttpResponse("Error en el body", status_code=400)
 
+    if "challenge" in req_body:
+        return func.HttpResponse(
+            json.dumps(req_body),
+            status_code=200,
+            mimetype="application/json"
+        )
+
     return func.HttpResponse("Funciona OK", status_code=200)
