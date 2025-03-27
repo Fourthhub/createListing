@@ -5,7 +5,7 @@ import requests
 
 URL_HOSTAWAY_TOKEN = "https://api.hostaway.com/v1/accessTokens"
 
-def obtener_acceso_hostaway():
+""" def obtener_acceso_hostaway():
     try:
         payload = {
             "grant_type": "client_credentials",
@@ -20,7 +20,7 @@ def obtener_acceso_hostaway():
     except requests.RequestException as e:
         logging.error(f"Error al obtener el token de acceso: {str(e)}")
         raise
-
+ """
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Procesando la petición HTTP.')
 
