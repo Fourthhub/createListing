@@ -29,7 +29,7 @@ def obtener_acceso_hostaway():
     except requests.RequestException as e:
         logging.error(f"Error al obtener el token de acceso de Hostaway: {str(e)}")
         raise
-def crear_listing(nombreApartamento,direccion,token):
+def crear_listing(nombreApartamento,direccion):
     """
     Crea un nuevo listing en Hostaway con el nombre proporcionado.
 
