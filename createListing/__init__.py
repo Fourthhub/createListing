@@ -1,7 +1,7 @@
 import azure.functions as func
 import logging
 import json
-
+import requests
 
 URL_HOSTAWAY_TOKEN = "https://api.hostaway.com/v1/accessTokens"
 
