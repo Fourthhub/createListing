@@ -48,7 +48,7 @@ def crear_listing(nombreApartamento,direccion):
     # Datos del nuevo listing
     data = {
         "propertyTypeId": 1,
-        "name": nombre,
+        "name": nombreApartamento,
         "externalListingName": nombreApartamento,
         "internalListingName": nombreApartamento,
         "description": "In a classic Bremerhaven house we rent out our apartment which has a living room, bed room and is close to all the restaurants and nightlife.",
