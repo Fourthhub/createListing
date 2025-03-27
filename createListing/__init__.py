@@ -133,7 +133,6 @@ def crear_listing(nombreApartamento,direccion,token):
         "invoicingContactCity": "London",
         "invoicingContactZipcode": "110011",
         "invoicingContactCountry": "UK",
-        "bookingcomPropertyHasVat": 1
     }
 
     # Realizar la solicitud POST
@@ -171,26 +170,26 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     # QUERY con title incluido desde column
     query = {
-        "query": """
-            query ($itemId: [Int]) {
-                items(ids: $itemId) {
-                    name
-                    column_values {
+    "query": """
+        query ($itemId: [ID!]) {
+            items(ids: $itemId) {
+                name
+                column_values {
+                    id
+                    text
+                    column {
                         id
-                        text
-                        column {
-                            id
-                            title
-                        }
-                        value
+                        title
                     }
+                    value
                 }
             }
-        """,
-        "variables": {
-            "itemId": pulse_id
         }
+    """,
+    "variables": {
+        "itemId": pulse_id
     }
+}
 
     try:
         response = requests.post(MONDAY_API_URL, json=query, headers=headers)
