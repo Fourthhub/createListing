@@ -3,6 +3,8 @@ import logging
 import json
 import requests
 
+URL_HOSTAWAY_TOKEN = "https://api.hostaway.com/v1/accessTokens"
+
 def obtener_acceso_hostaway():
     try:
         payload = {
@@ -22,15 +24,11 @@ def obtener_acceso_hostaway():
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Procesando la petición HTTP.')
 
-    # Intenta obtener el parámetro 'id' de la query string
-
-    
-    req_body = {}
     try:
         req_body = req.get_json()
         logging.info("Cuerpo recibido: " + json.dumps(req_body))
     except Exception as e:
         logging.error("Error al obtener el body: " + str(e))
+        return func.HttpResponse("Error en el body", status_code=400)
 
-    # Si 'id' no viene en la query, se extrae del body
-   
+    return func.HttpResponse("Funciona OK", status_code=200)
