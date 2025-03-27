@@ -110,7 +110,7 @@ def crear_listing(nombreApartamento, direccion):
         "cleannessStatusUpdatedOn": None,
         "homeawayPropertyName": "Beautiful and cozy apartment close to city center",
         "homeawayPropertyHeadline": "Beautiful and cozy apartment close to city center with a living room and bed room",
-        "homeawayPropertyDescription": "In a classic Bremerhaven house we rent out our apartment which has a living room, bed room and is close to all the restaurants and nightlife.",
+        "homeawayPropertyDescription": "In a classic Bdremerhaven house we rent out our apartment which has a living room, bed room and is close to all the restaurants and nightlife.",
         "bookingcomPropertyName": "Beautiful and cozy apartment close to city center",
         "bookingcomPropertyRoomName": "Apartment",
         "bookingcomPropertyDescription": "In a classic Bremerhaven house we rent out our apartment which has a living room, bed room and is close to all the restaurants and nightlife.",
