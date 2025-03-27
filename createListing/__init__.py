@@ -30,12 +30,6 @@ def obtener_acceso_hostaway():
         logging.error(f"Error al obtener el token de acceso de Hostaway: {str(e)}")
         raise
 def crear_listing(nombreApartamento,direccion):
-    """
-    Crea un nuevo listing en Hostaway con el nombre proporcionado.
-
-    :param nombre: Nombre del nuevo listing.
-    :return: Respuesta de la API de Hostaway.
-    """
     # Endpoint para crear un listing
     endpoint = f"https://api.hostaway.com/v1/listings"
 
